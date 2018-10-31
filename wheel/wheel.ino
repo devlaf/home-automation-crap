@@ -3,10 +3,10 @@
 #include <PubSubClient.h>
 #include <AccelStepper.h>
 #include "config/mqtt_server.h"
-#include "esp8266_utils/serial_logger.h"
-#include "esp8266_utils/wifi_tools.h"
-#include "esp8266_utils/serial_logger.cpp"  // this arduino ide thing is annoying
-#include "esp8266_utils/wifi_tools.cpp"
+#include "esp8266_utils/include/serial_logger.h"
+#include "esp8266_utils/include/wifi_tools.h"
+#include "esp8266_utils/src/serial_logger.cpp"  // this arduino ide thing is annoying
+#include "esp8266_utils/src/wifi_tools.cpp"
 
 #define pin_button    1
 #define pin_motor_enable   14

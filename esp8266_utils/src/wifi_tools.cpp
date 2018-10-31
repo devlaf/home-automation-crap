@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <ESP8266WiFi.h>
-#include "serial_logger.h"
+#include "../include/serial_logger.h"
 
 #define pin_net_id_bit_3 12
 #define pin_net_id_bit_2 13
