@@ -4,6 +4,7 @@
 #######################
 
 mqtt_server.py
+mqtt_server.h
 
 #######################
 # Python
