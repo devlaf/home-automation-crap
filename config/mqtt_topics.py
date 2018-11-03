@@ -13,3 +13,7 @@ spotify_played =        lambda location: "/media/spotify/{}/played".format(locat
 spotify_paused =        lambda location: "/media/spotify/{}/paused".format(location.name)
 spotify_metadata =      lambda location: "/media/spotify/{}/metadata".format(location.name)
 spotify_volume_status = lambda location: "/media/spotify/{}/volume-status".format(location.name)
+
+wheel_spin =            "/wheel/spin"
+wheel_spun =            "/wheel/spun"
+
