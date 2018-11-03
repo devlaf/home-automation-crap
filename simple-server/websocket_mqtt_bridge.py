@@ -30,13 +30,11 @@ def websocket_publish(msg):
 
 async def publish_timer():
     while True:
-        print(connected_ws_clients)
-        print(messages)
         to_remove = set()
         for ws in connected_ws_clients:
             try:
                 for msg in messages:
-                    ws.send(msg)
+                    await ws.send(msg)
             except:
                 to_remove.add(ws)
         for removable in to_remove:
