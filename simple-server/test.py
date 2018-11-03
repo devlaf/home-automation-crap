@@ -8,4 +8,4 @@ async def hello(uri):
         await websocket.send("spin")
 
 asyncio.get_event_loop().run_until_complete(
-    hello('ws://localhost:8765'))
+    hello('ws://narwhal.arctic:8765'))

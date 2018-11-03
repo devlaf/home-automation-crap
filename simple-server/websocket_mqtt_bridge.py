@@ -4,6 +4,7 @@ import sys
 import os
 import asyncio
 import websockets
+from multiprocessing import Process, Manager
 import paho.mqtt.client as mqtt
 import paho.mqtt.publish as publish
 
@@ -14,27 +15,41 @@ from mqtt_server import *
 websocket_port = 8765
 mqtt_client = mqtt.Client()
 connected_ws_clients = set()
+manager = Manager()
+messages = manager.list()
 
-async def on_websocket_msg(websocket, path):
+async def on_websocket_connection(websocket, path):
     connected_ws_clients.add(websocket)
+
     async for message in websocket:
         if message == "spin":
             mqtt_publish(wheel_spin, "")
 
-async def websocket_publish(msg):
-    to_remove = set()
-    async for ws in connected_ws_clients:
-        try:
-            await asyncio.wait(ws.send(msg))
-        except:
-            to_remove.add(ws)
-    connected_ws_clients.remove(to_remove)
+def websocket_publish(msg):
+    messages.append(msg)
+
+async def publish_timer():
+    while True:
+        print(connected_ws_clients)
+        print(messages)
+        to_remove = set()
+        for ws in connected_ws_clients:
+            try:
+                for msg in messages:
+                    ws.send(msg)
+            except:
+                to_remove.add(ws)
+        for removable in to_remove:
+            connected_ws_clients.remove(removable)
+        del messages[:]
+
+        await asyncio.sleep(1)
 
 def on_mqtt_message(client, userdata, msg):
     print("Received message: [" + msg.topic + "] " + str(msg.payload))
 
     if msg.topic == wheel_spun:
-        asyncio.get_event_loop().run_until_complete(websocket_publish("spun"))
+        websocket_publish("spun")
 
 def mqtt_publish(topic, payload):
     publish.single(topic=topic, payload=payload, hostname=mqtt_host,
@@ -59,7 +74,7 @@ def setup_mqtt_client():
 
 
 setup_mqtt_client()
-mqtt_client.loop_start()
-asyncio.get_event_loop().run_until_complete(websockets.serve(on_websocket_msg, 'localhost', websocket_port))
+tasks = [websockets.serve(on_websocket_connection, '', websocket_port), publish_timer()]
+asyncio.get_event_loop().run_until_complete(asyncio.wait(tasks))
 asyncio.get_event_loop().run_forever()
 
