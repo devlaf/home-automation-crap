@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset=utf-8 />
+ <title>wheel shit</title>
+ <style type="text/css">
+  body { padding-top: 30px }
+ </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Spin The Wheel</h1>
+    <p><input type="button" id="sendit" name="sendit" value="I'm a dipshit!" onclick="sendit()"/></p>
+  </div>
+</body>
+
+<script type="text/javascript">
+
+  var socket = new WebSocket("ws://narwhal.arctic:8765", "events-protocol");
+
+  socket.onopen = function() {
+     console.log("ws_connection opened");
+   }
+
+   socket.onclose = function() {
+     console.log("closed");
+   }
+
+   socket.onmessage = function(msg) {
+     document.getElementById("sendit").disabled = false;
+   }
+
+  function sendit() {
+    socket.send("spin");
+    document.getElementById("sendit").disabled = true;
+  }
+</script>
