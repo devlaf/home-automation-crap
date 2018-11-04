@@ -28,7 +28,7 @@ async def on_websocket_connection(websocket, path):
 def websocket_publish(msg):
     messages.append(msg)
 
-async def publish_timer():
+async def publisher_timer():
     while True:
         to_remove = set()
         for ws in connected_ws_clients:
@@ -70,9 +70,12 @@ def setup_mqtt_client():
     mqtt_client.on_message = on_mqtt_message
     mqtt_client.loop_start()
 
-
 setup_mqtt_client()
-tasks = [websockets.serve(on_websocket_connection, '', websocket_port), publish_timer()]
+
+tasks = [
+    websockets.serve(on_websocket_connection, '', websocket_port), 
+    publisher_timer()
+]
 asyncio.get_event_loop().run_until_complete(asyncio.wait(tasks))
 asyncio.get_event_loop().run_forever()
 
