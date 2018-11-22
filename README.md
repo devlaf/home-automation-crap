@@ -1,2 +1,2 @@
-# home-automation-bullshit
+# home-automation-bs
 a genuine cesspool
