@@ -23,7 +23,7 @@
 
 <script type="text/javascript">
 
-  var socket = new WebSocket("ws://narwhal.arctic:8765", "events-protocol");
+  var socket = new WebSocket("ws://" + location.hostname + ":8765", "events-protocol");
 
   socket.onopen = function() {
      console.log("ws_connection opened");
@@ -45,7 +45,7 @@
   function update_alarm() {
     var hour = document.getElementById('hour').value;
     var minute = document.getElementById('minute').value ;
-    var url = "http://narwhal.arctic/alarm?hour=" + hour + "&minute=" + minute;
+    var url = "http://" + location.hostname + "/alarm?hour=" + hour + "&minute=" + minute;
 
     var xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);
