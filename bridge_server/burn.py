@@ -12,7 +12,7 @@ cron = CronTab(user='devin')
 def set_alarm(hour, minute):
     remove_existing()
     
-    job = cron.new(command='/home/devin/src/home-automation-bullshit/bridge_server/alarm.sh')
+    job = cron.new(command=os.path.dirname(os.path.realpath(__file__)) + '/alarm.sh')
     job.hour.on(hour)
     job.minute.on(minute)
     job.enable()
