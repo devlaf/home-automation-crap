@@ -12,6 +12,12 @@
   <div class="container">
     <h1>Spin The Wheel</h1>
     <p><input type="button" id="sendit" name="sendit" value="Spin The Wheel!" onclick="sendit()"/></p>
+    <h1>Update Sunlight Alarm</h1>
+    <p>
+      <input type="number" id="hour" name="hour" min="0" max="23">
+      <input type="number" id="minute" name="minute" min="0" max="59">
+      <input type="button" id="alarmed" name="alarmed" value="update alarm" onclick="update_alarm()"/>
+    </p>
   </div>
 </body>
 
@@ -35,4 +41,16 @@
     socket.send("spin");
     document.getElementById("sendit").disabled = true;
   }
+
+  function update_alarm() {
+    var hour = document.getElementById('hour').value;
+    var minute = document.getElementById('minute').value ;
+    var url = "http://narwhal.arctic/alarm?hour=" + hour + "&minute=" + minute;
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send("");
+  }
+
 </script>

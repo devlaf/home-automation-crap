@@ -2,28 +2,35 @@
 
 import sys
 import os
-import asyncio
-from multiprocessing import Process, Manager
-import paho.mqtt.client as mqtt
-import paho.mqtt.publish as publish
+from crontab import CronTab
+from twisted.internet.defer import succeed
+from twisted.web.static import File
+from klein import run, route
 
-sys.path.append(os.path.relpath("../config"))
-from mqtt_topics import *
-from mqtt_server import *
+cron = CronTab(user='devin')
 
-mqtt_client = mqtt.Client()
+def set_alarm(hour, minute):
+    remove_existing()
+    
+    job = cron.new(command='/home/devin/src/home-automation-bullshit/bridge_server/alarm.sh')
+    job.hour.on(hour)
+    job.minute.on(minute)
+    job.enable()
+    cron.write()
 
-def mqtt_publish(topic, payload):
-    publish.single(topic=topic, payload=payload, hostname=mqtt_host,
-        port=mqtt_port, auth={'username':mqtt_username, 'password':mqtt_password},
-        keepalive=60, transport="tcp")
+def remove_existing():
+    for entry in cron.find_command('alarm.sh'):
+        cron.remove(entry)
 
-def setup_mqtt_client():
-    mqtt_client.username_pw_set(mqtt_username, mqtt_password)
-    mqtt_client.connect(mqtt_host, mqtt_port, 60)
-    mqtt_client.on_connect = on_mqtt_connect
-    mqtt_client.on_message = on_mqtt_message
-    mqtt_client.loop_start()
+@route('/alarm', methods=['POST'])
+def setname(request):
+    hour = request.args.get(b'hour', [b''])[0].decode("utf8")
+    minute = request.args.get(b'minute', [b''])[0].decode("utf8")
+    set_alarm(hour, minute)
+    return succeed(None)
 
-setup_mqtt_client()
+@route('/', branch=True)
+def home(request):
+  return File('./')
 
+run('0.0.0.0', 80)
